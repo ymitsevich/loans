@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from decimal import Decimal
 from uuid import uuid4
 
@@ -13,7 +12,7 @@ from loans.application.ports import ApplicationStatusCache, LoanApplicationRepos
 from loans.interfaces.http.dependencies import AppContainer, cleanup_container
 from sqlalchemy import text
 
-from loans.infrastructure.db import initialize_database, get_engine
+from loans.infrastructure.db import get_engine, initialize_database
 
 
 @pytest.mark.asyncio
