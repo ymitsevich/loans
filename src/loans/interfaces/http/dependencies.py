@@ -20,6 +20,7 @@ from ...application.ports import (
     LoanApplicationRepository,
 )
 from ...infrastructure import (
+    CachedLoanApplicationRepository,
     InMemoryApplicationEventPublisher,
     InMemoryLoanApplicationRepository,
     InMemoryStatusCache,
@@ -66,13 +67,12 @@ class AppContainer:
         self._redis_client = None
         self._kafka_publisher: KafkaApplicationEventPublisher | None = None
 
+        repository: LoanApplicationRepository
         if self.repository_backend == "postgres":
             self.session_factory = create_session_factory()
-            self.application_repository: LoanApplicationRepository = PostgresLoanApplicationRepository(
-                self.session_factory
-            )
+            repository = PostgresLoanApplicationRepository(self.session_factory)
         else:
-            self.application_repository = InMemoryLoanApplicationRepository()
+            repository = InMemoryLoanApplicationRepository()
 
         if self.cache_backend == "redis":
             redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
@@ -94,6 +94,12 @@ class AppContainer:
         self.kafka_topic = os.getenv("KAFKA_APPLICATION_TOPIC", "loan-applications")
         self.approval_threshold = Decimal("5000")
         self.cache_ttl_seconds = 3600
+
+        self.application_repository = CachedLoanApplicationRepository(
+            backing=repository,
+            cache=self.status_cache,
+            cache_ttl_seconds=self.cache_ttl_seconds,
+        )
 
 
 container = AppContainer()
@@ -146,9 +152,8 @@ def get_process_application_use_case(
 
 def get_application_status_use_case(
     repository: LoanApplicationRepository = Depends(get_application_repository),
-    cache: ApplicationStatusCache = Depends(get_status_cache),
 ) -> GetApplicationStatus:
-    return GetApplicationStatus(repository=repository, cache=cache)
+    return GetApplicationStatus(repository=repository)
 
 
 async def cleanup_container(instance: AppContainer) -> None:

@@ -73,7 +73,6 @@ async def test_submit_application_flow() -> None:
 
             status_use_case = GetApplicationStatus(
                 repository=container.application_repository,
-                cache=container.status_cache,
             )
             result: ApplicationStatusResult = await status_use_case.execute(payload["applicant_id"])
             assert result.status == ApplicationStatus.APPROVED

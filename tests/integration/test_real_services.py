@@ -36,7 +36,7 @@ async def test_process_application_with_real_services() -> None:
         result = await processor.execute(command)
         assert result.status.value == "approved"
 
-        status_use_case = GetApplicationStatus(repository=repository, cache=cache)
+        status_use_case = GetApplicationStatus(repository=repository)
         view = await status_use_case.execute(applicant_id)
         assert view.status.value == "approved"
         assert view.applicant_id == applicant_id

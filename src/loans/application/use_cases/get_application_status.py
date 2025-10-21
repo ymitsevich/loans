@@ -7,7 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from ...domain import ApplicationStatus, LoanApplication
-from ..ports import ApplicationStatusCache, LoanApplicationRepository
+from ..ports import LoanApplicationRepository
 
 
 class ApplicationNotFoundError(LookupError):
@@ -31,16 +31,10 @@ class GetApplicationStatus:
     def __init__(
         self,
         repository: LoanApplicationRepository,
-        cache: ApplicationStatusCache,
     ) -> None:
         self._repository = repository
-        self._cache = cache
 
     async def execute(self, applicant_id: str) -> ApplicationStatusResult:
-        cached_application = await self._cache.get(applicant_id)
-        if cached_application:
-            return _to_result(cached_application)
-
         application: LoanApplication | None = await self._repository.get_latest(applicant_id)
         if application is None:
             raise ApplicationNotFoundError(f"No application found for applicant '{applicant_id}'.")
