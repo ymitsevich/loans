@@ -6,7 +6,7 @@ import json
 import logging
 import os
 import sys
-from typing import Any, Dict
+from typing import Dict
 
 _LEVEL_NAMES: Dict[str, int] = {
     "critical": logging.CRITICAL,
