@@ -39,6 +39,6 @@ class RedisStatusCache(ApplicationStatusCache):
 
     async def close(self) -> None:
         try:
-            await self._client.close()
+            await self._client.aclose()
         except Exception:  # pragma: no cover - defensive
             LOGGER.exception("Failed closing Redis client")

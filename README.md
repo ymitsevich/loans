@@ -46,6 +46,7 @@ docker compose exec api python scripts/warm_cache.py
 - Processor Prometheus metrics exposed on `${PROCESSOR_METRICS_PORT:-9000}`
 - Kafka UI available at http://localhost:8080/ (via `kafka-ui` service)
 - Structured JSON logs emitted by API and processor containers
+- Processor approves applications when the requested amount is at or below the configured threshold (`5000` by default) and rejects larger requests.
 
 ## Local Development
 

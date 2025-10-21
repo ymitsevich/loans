@@ -15,6 +15,7 @@ These guardrails target a Python-first, Docker-native workflow for the `loans` m
 - Always annotate public APIs with type hints; enable `from __future__ import annotations` as needed.
 - Favor composition over inheritance unless a real hierarchy exists.
 - Document intent with succinct docstrings where behavior or contracts are non-obvious.
+- Prefer guard clauses and early returns; avoid deep or branching `if`/`elif`/`else` chains unless a ternary keeps the flow clear.
 
 ## Clean Architecture Layout
 - Keep the domain model pure Python, framework-agnostic, and free from I/O.

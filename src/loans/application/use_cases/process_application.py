@@ -46,15 +46,16 @@ class ProcessApplication:
         )
 
         existing = await self._repository.get_latest(command.applicant_id)
-        if existing:
-            application = existing.with_status(status)
-        else:
-            application = LoanApplication(
+        application = (
+            existing.with_status(status)
+            if existing
+            else LoanApplication(
                 applicant_id=command.applicant_id,
                 amount=command.amount,
                 term_months=command.term_months,
                 status=status,
             )
+        )
 
         await self._repository.upsert(application)
         await self._cache.set(command.applicant_id, status, ttl_seconds=self._cache_ttl_seconds)
