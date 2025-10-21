@@ -74,3 +74,13 @@ async def initialize_database() -> None:
     engine = get_engine()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+
+async def dispose_engine() -> None:
+    """Dispose of the cached engine and reset session factory."""
+    global _engine, _session_factory
+    if _session_factory is not None:
+        _session_factory = None
+    if _engine is not None:
+        await _engine.dispose()
+        _engine = None

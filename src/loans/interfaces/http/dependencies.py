@@ -26,7 +26,7 @@ from ...infrastructure import (
     PostgresLoanApplicationRepository,
 )
 from ...infrastructure.cache import RedisStatusCache, create_redis_client
-from ...infrastructure.db import create_session_factory
+from ...infrastructure.db import create_session_factory, dispose_engine
 from ...infrastructure.messaging import KafkaApplicationEventPublisher, build_producer
 
 RepositoryBackend = Literal["postgres", "memory"]
@@ -159,3 +159,5 @@ async def cleanup_container(instance: AppContainer) -> None:
         await status_cache.close()
     if isinstance(event_publisher, KafkaApplicationEventPublisher):
         await event_publisher.close()
+    if instance.repository_backend == "postgres":
+        await dispose_engine()

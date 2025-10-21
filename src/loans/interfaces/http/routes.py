@@ -44,7 +44,7 @@ class ApplicationStatusResponse(BaseModel):
 
     applicant_id: str
     status: str
-    amount: float
+    amount: Decimal
     term_months: int
     updated_at: datetime
 
@@ -66,7 +66,7 @@ async def submit_application(
         extra={
             "extra_data": {
                 "applicant_id": payload.applicant_id,
-                "amount": float(payload.amount),
+                "amount": str(payload.amount),
                 "term_months": payload.term_months,
             }
         },
@@ -98,12 +98,12 @@ async def get_application_status(
     LOGGER.info(
         "application_status_fetched",
         extra={
-            "extra_data": {
-                "applicant_id": response.applicant_id,
-                "status": response.status,
-                "amount": response.amount,
-                "term_months": response.term_months,
-            }
+                "extra_data": {
+                    "applicant_id": response.applicant_id,
+                    "status": response.status,
+                    "amount": str(response.amount),
+                    "term_months": response.term_months,
+                }
         },
     )
     return response

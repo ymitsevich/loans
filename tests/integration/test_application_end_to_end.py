@@ -67,8 +67,9 @@ async def test_submit_application_flow() -> None:
             )
             assert processed.status == ApplicationStatus.APPROVED
 
-            cached_status = await container.status_cache.get(payload["applicant_id"])
-            assert cached_status == ApplicationStatus.APPROVED
+            cached_application = await container.status_cache.get(payload["applicant_id"])
+            assert cached_application is not None
+            assert cached_application.status == ApplicationStatus.APPROVED
 
             status_use_case = GetApplicationStatus(
                 repository=container.application_repository,
@@ -76,11 +77,13 @@ async def test_submit_application_flow() -> None:
             )
             result: ApplicationStatusResult = await status_use_case.execute(payload["applicant_id"])
             assert result.status == ApplicationStatus.APPROVED
+            assert result.amount == event.amount
 
             status_response = await client.get(f"/application/{payload['applicant_id']}")
             assert status_response.status_code == 200
             body = status_response.json()
             assert body["status"] == ApplicationStatus.APPROVED.value
             assert body["applicant_id"] == payload["applicant_id"]
+            assert Decimal(body["amount"]) == event.amount
     finally:
         override_container(original_container)

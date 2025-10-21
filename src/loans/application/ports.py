@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Protocol
 
-from ..domain import ApplicationStatus, LoanApplication
+from ..domain import LoanApplication
 
 
 @dataclass(frozen=True)
@@ -32,12 +32,12 @@ class LoanApplicationRepository(Protocol):
 
 
 class ApplicationStatusCache(Protocol):
-    """Cache for storing the most recent application status."""
+    """Cache for storing the most recent loan application snapshot."""
 
-    async def set(self, applicant_id: str, status: ApplicationStatus, ttl_seconds: int) -> None:
+    async def set(self, application: LoanApplication, ttl_seconds: int) -> None:
         ...
 
-    async def get(self, applicant_id: str) -> ApplicationStatus | None:
+    async def get(self, applicant_id: str) -> LoanApplication | None:
         ...
 
 

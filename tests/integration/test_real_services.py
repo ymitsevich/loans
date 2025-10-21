@@ -40,7 +40,7 @@ async def test_process_application_with_real_services() -> None:
         view = await status_use_case.execute(applicant_id)
         assert view.status.value == "approved"
         assert view.applicant_id == applicant_id
-        assert view.amount == float(command.amount)
+        assert view.amount == command.amount
         assert view.term_months == command.term_months
     finally:
         await cleanup_container(container)

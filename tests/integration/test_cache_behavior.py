@@ -28,13 +28,16 @@ async def test_get_application_status_prefers_cache() -> None:
 
     try:
         await container.application_repository.create(application)
-        await container.status_cache.set("applicant-cache", ApplicationStatus.APPROVED, ttl_seconds=3600)
+        await container.status_cache.set(
+            application.with_status(ApplicationStatus.APPROVED), ttl_seconds=3600
+        )
 
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
             response = await client.get("/application/applicant-cache")
         assert response.status_code == 200
         body = response.json()
         assert body["status"] == ApplicationStatus.APPROVED.value
+        assert Decimal(body["amount"]) == Decimal("1000")
     finally:
         await cleanup_container(container)
         override_container(original_container)
@@ -62,6 +65,7 @@ async def test_get_application_status_falls_back_to_database() -> None:
         assert response.status_code == 200
         body = response.json()
         assert body["status"] == ApplicationStatus.REJECTED.value
+        assert Decimal(body["amount"]) == Decimal("750")
     finally:
         await cleanup_container(container)
         override_container(original_container)

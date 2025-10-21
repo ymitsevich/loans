@@ -58,7 +58,7 @@ class ProcessApplication:
         )
 
         await self._repository.upsert(application)
-        await self._cache.set(command.applicant_id, status, ttl_seconds=self._cache_ttl_seconds)
+        await self._cache.set(application, ttl_seconds=self._cache_ttl_seconds)
         return application
 
     @staticmethod

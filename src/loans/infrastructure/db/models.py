@@ -32,6 +32,7 @@ class LoanApplicationModel(Base):
     __table_args__ = (
         CheckConstraint("amount > 0", name="ck_loan_applications_amount_positive"),
         CheckConstraint("term_months > 0", name="ck_loan_applications_term_positive"),
+        CheckConstraint("term_months <= 60", name="ck_loan_applications_term_max"),
     )
 
     @classmethod

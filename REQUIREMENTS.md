@@ -60,3 +60,4 @@ A FastAPI-based microservice that collects loan applications, publishes them to 
 - Adopt Alembic migrations once the schema evolves beyond the initial scope.
 - Extend observability (dashboards, alerts, trace IDs, processor health endpoints).
 - Consider supporting multiple concurrent applications per applicant (introduce an `application_id`).
+- Strengthen idempotency/ordering guarantees for concurrent event processing.
