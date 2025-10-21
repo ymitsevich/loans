@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtualenvs
+.venv/
+venv/
+
+# Poetry
+poetry.lock
+.pdm.toml
+
+# IDE
+.idea/
+.vscode/
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+.env
+/data/
