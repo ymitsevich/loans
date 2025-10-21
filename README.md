@@ -1,6 +1,13 @@
 # Loan Application Processing Service
 
-A lightweight FastAPI microservice for accepting loan applications, emitting them to Kafka, validating decisions asynchronously, persisting state in PostgreSQL, and caching the latest status in Redis for fast reads.
+A lightweight FastAPI microservice for accepting loan applications, emitting them to Kafka, validating decisions asynchronously, persisting state in PostgreSQL, and caching the latest status in Redis for fast reads. A cached repository decorator wraps the Postgres implementation so Redis snapshots are transparently served on reads while writes stay authoritative in the database.
+
+## Architecture Overview
+
+- FastAPI REST API (`POST /application`, `GET /application/{id}`) publishes loan submissions to Kafka and surfaces the latest status.
+- Background processor consumes Kafka messages, applies the approval threshold (≤ 5000 approved), persists results to PostgreSQL, and refreshes Redis.
+- `CachedLoanApplicationRepository` composes the repository and Redis cache, providing a single abstraction for the application layer.
+- Docker Compose orchestrates API, PostgreSQL, Redis, Kafka/Zookeeper, the processor worker, and Kafka UI for local development.
 
 ## Requirements
 
